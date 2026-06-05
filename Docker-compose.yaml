@@ -1,0 +1,275 @@
+networks:
+  data_pipeline:
+    driver: bridge
+
+volumes:
+  kafka-data:
+  postgres-db-volume:
+
+  metadata_data: {}
+  middle_var: {}
+  historical_var: {}
+  broker_var: {}
+  coordinator_var: {}
+  router_var: {}
+  druid_shared: {}
+
+x-cluster-id: &cluster-id "bgVKLUurTM6-Wx0gyGaPxQ"
+
+services:
+
+  kafka:
+    image: confluentinc/cp-kafka:7.7.0
+    container_name: kafka
+    hostname: kafka
+
+    ports:
+      - "9092:9092"
+
+    environment:
+      CLUSTER_ID: bgVKLUurTM6-Wx0gyGaPxQ
+
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: "broker,controller"
+
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:29093"
+
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092"
+
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
+
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:29093"
+
+      KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+
+    networks:
+      - data_pipeline
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
+    container_name: kafdrop
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka-broker-1:19092,kafka-broker-2:19092"
+      JVM_OPTS: "-Xms32M -Xmx128M"
+      SERVER_SERVLET_CONTEXTPATH: "/"
+    depends_on:
+      - kafka
+
+    networks:
+      - data_pipeline
+  spark-master:
+    build: .
+    container_name: spark-master
+    environment:
+      AWS_ACCESS_KEY_ID: minio_admin
+      AWS_SECRET_ACCESS_KEY: 123456789
+    command:
+
+      - /opt/spark/bin/spark-class
+      - org.apache.spark.deploy.master.Master
+    ports:
+      - "9090:8080"
+      - "7077:7077"
+    volumes:
+      - ./:/opt/project
+    networks:
+      - data_pipeline
+    restart: unless-stopped
+
+  spark-worker-1:
+    build: .
+    container_name: spark-worker
+    command:
+      - /opt/spark/bin/spark-class
+      - org.apache.spark.deploy.worker.Worker
+      - spark://spark-master:7077
+    depends_on:
+      - spark-master
+    environment:
+      SPARK_MODE: worker
+      SPARK_WORKER_CORES: 2
+      SPARK_WORKER_MEMORY: 1g
+      SPARK_MASTER_URL: spark://spark-master:7077
+
+    volumes:
+      - ./:/opt/project
+    networks:
+      - data_pipeline
+    restart: unless-stopped
+
+  spark-worker-2:
+    build: .
+    container_name: spark-worker-2
+    command:
+      - /opt/spark/bin/spark-class
+      - org.apache.spark.deploy.worker.Worker
+      - spark://spark-master:7077
+    depends_on:
+      - spark-master
+    environment:
+      SPARK_MODE: worker
+      SPARK_WORKER_CORES: 2
+      SPARK_WORKER_MEMORY: 1g
+      SPARK_MASTER_URL: spark://spark-master:7077
+
+    volumes:
+      - ./:/opt/project
+    networks:
+      - data_pipeline
+    restart: unless-stopped
+
+  #APACHE DRUID
+  # 1. zookeeper
+  zookeeper:
+    image: zookeeper:3.9
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      - ZOO_MY_ID=1
+    healthcheck:
+      test: [ "CMD", "bash", "-c", "echo ruok | nc localhost 2181" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - data_pipeline
+
+  #4. postgress
+  postgres:
+    container_name: postgres
+    image: postgres:16.0
+    ports:
+      - "5432:5432"
+    volumes:
+      - metadata_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=Kidathegreat058
+      - POSTGRES_USER=druid
+      - POSTGRES_DB=druid
+    networks:
+      - data_pipeline
+
+  # 3. Cordinator
+  coordinator:
+    image: apache/druid:30.0.0
+    container_name: coordinator
+    volumes:
+      - druid_shared:/opt/shared
+      - coordinator_var:/opt/druid/var
+    depends_on:
+      - zookeeper
+      - postgres
+    ports:
+      - "8084:8084"
+    command:
+      - coordinator
+    env_file:
+      - environment
+    networks:
+      - data_pipeline
+
+  #4. broker
+  broker:
+    image: apache/druid:30.0.0
+    container_name: broker
+    volumes:
+      - druid_shared:/opt/shared
+      - broker_var:/opt/druid/var
+    depends_on:
+      - zookeeper
+      - postgres
+      - coordinator
+    ports:
+      - "8082:8082"
+    command:
+      - broker
+    env_file:
+      - environment
+    networks:
+      - data_pipeline
+
+  #5. Historical
+  historical:
+    image: apache/druid:30.0.0
+    container_name: historical
+    volumes:
+      - druid_shared:/opt/shared
+      - historical_var:/opt/druid/var
+    depends_on:
+      - zookeeper
+      - postgres
+      - coordinator
+    ports:
+      - "8083:8083"
+    command:
+      historical
+    env_file:
+      - environment
+    networks:
+      - data_pipeline
+
+  #6. middlemanager
+  middlemanager:
+    image: apache/druid:30.0.0
+    container_name: middlemanager
+    command:
+      - middleManager
+    volumes:
+      - druid_shared:/opt/shared
+      - middle_var:/opt/druid/var
+      - ./fix-sed.sh:/fix-sed.sh
+    depends_on:
+      - zookeeper
+      - postgres
+      - coordinator
+    ports:
+      - "8091:8091"
+      - "8100-8105:8100-8105"
+    env_file:
+      - environment
+    networks:
+      - data_pipeline
+
+  #7. Router
+  router:
+    image: apache/druid:30.0.0
+    container_name: router
+    volumes:
+      - router_var:/opt/druid/var
+    depends_on:
+      - zookeeper
+      - postgres
+      - coordinator
+    ports:
+      - "8888:8888"
+    command:
+      - router
+    env_file:
+      - environment
+    networks:
+      - data_pipeline
+  superset:
+    image: apache/superset:latest
+    container_name: superset
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./superset-requirements.txt:/app/requirements-local.txt
+    environment:
+      - SUPERSET_SECRET_KEY=your_secret_key_here
+    networks:
+      - data_pipeline
