@@ -1,0 +1,9 @@
+confluent-kafka
+pyarrow
+pyspark
+redis
+numpy
+pandas
+py4j
+pydantic
+pytest
