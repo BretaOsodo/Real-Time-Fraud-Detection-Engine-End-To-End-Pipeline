@@ -212,3 +212,101 @@ class TransactionDataGenerator:
 
         return transaction
 
+    def generate_flutterwave_transaction(self) -> Dict:
+        transaction_ref=f"TX{int(time.time())}{random.randint(100, 999)}"
+        amount=round(random.uniform(1, 400000), 2)
+        transaction_id = random.randint(1000000, 9999999)
+
+        payload = {
+            'id': transaction_id,
+            'tx_ref': transaction_ref,
+            'amount': amount,
+        }
+        verification_hash = hmac.new(
+            self.hmac_secret,
+            json.dumps(payload, sort_keys=True).encode(),
+            hashlib.sha512
+        ).hexdigest()
+
+        transaction = {
+            'source': 'FLUTTERWAVE',
+            'source_type': 'WEBHOOK',
+            'webhook_payload': {
+                'event': random.choice([
+                    'charge.completed', 'transfer.completed', 'payment.verified'
+                ]),
+                'data': {
+                    'id': transaction_id,
+                    'tx_ref': transaction_ref,
+                    'flw_ref': f'FLW{random.randint(100000000, 999999999)}',
+                    'device_fingerprint': hashlib.md5(
+                        f"device_{random.randint(1, 10000)}".encode()
+                    ).hexdigest(),
+                    'amount': amount,
+                    'currency': random.choice(['KES', 'USD', 'GBP', 'EUR']),
+                    'charged_amount': amount,
+                    'app_fee': round(amount * 0.025, 2),
+                    'merchant_fee': round(amount * 0.01, 2),
+                    'processor_response': random.choice(['Approved', 'Declined']),
+                    'auth_model': random.choice(['PIN', 'NOAUTH', 'VBV', 'OTP']),
+                    'payment_type': random.choice(['card', 'mpesa', 'banktransfer']),
+                    'status': random.choice(['successful', 'pending', 'failed']),
+                    'customer': {
+                        'id': random.randint(1000, 9999),
+                        'name': fake.name(),
+                        'phone_number': f'254{random.randint(700000000, 799999999)}',
+                        'email': fake.email(),
+                    },
+                    'card': {
+                        'first_6digits': random.choice(['520000', '530000', '540000']),
+                        'last_4digits': str(random.randint(1000, 9999)),
+                        'issuer': random.choice(['VISA', 'MASTERCARD']),
+                        'country': 'KE',
+                        'type': random.choice(['DEBIT', 'CREDIT']),
+                    },
+                },
+            },
+            'verification_hash': verification_hash,
+            'timestamp': datetime.now().isoformat(),
+            'event_time_ms': int(time.time() * 1000),
+        }
+
+        return transaction
+
+    def generate_pesapal_transaction(self) -> Dict:
+        """Generate a Pesapal IPN callback transaction."""
+
+        merchant_ref = f'REF{int(time.time())}{random.randint(100, 999)}'
+        tracking_id = f'TRACK{random.randint(100000000, 999999999)}'
+        amount = round(random.uniform(10, 50000), 2)
+
+        signature_string = f"{merchant_ref}{tracking_id}COMPLETED"
+        ipn_signature = base64.b64encode(
+            hmac.new(self.hmac_secret, signature_string.encode(), hashlib.sha1).digest()
+        ).decode()
+
+        transaction = {
+            'source': 'PESAPAL',
+            'source_type': 'IPN_CALLBACK',
+            'ipn_payload': {
+                'pesapal_merchant_reference': merchant_ref,
+                'pesapal_transaction_tracking_id': tracking_id,
+                'payment_status': random.choice(['COMPLETED', 'PENDING', 'FAILED', 'INVALID']),
+                'payment_method': random.choice(['VISA', 'MASTERCARD', 'MPESA', 'AIRTEL_MONEY']),
+                'amount': amount,
+                'currency': random.choice(['KES', 'USD', 'UGX', 'TZS', 'GBP']),
+                'created_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'confirmation_code': f'CODE{random.randint(10000, 99999)}',
+                'payment_account': f'254{random.randint(700000000, 799999999)}',
+                'customer_email': fake.email(),
+                'customer_phone': f'254{random.randint(700000000, 799999999)}',
+                'customer_first_name': fake.first_name(),
+                'customer_last_name': fake.last_name(),
+                'description': f'Payment for order {random.randint(1000, 9999)}',
+            },
+            'ipn_signature': ipn_signature,
+            'timestamp': datetime.now().isoformat(),
+            'event_time_ms': int(time.time() * 1000),
+        }
+
+        return transaction
