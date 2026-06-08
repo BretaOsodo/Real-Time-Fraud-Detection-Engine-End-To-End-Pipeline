@@ -12,7 +12,7 @@ def produce_flutter_transaction():
         'bootstrap.servers':'localhost:9092',
         'acks':'all',
         'retries':10,
-        'enable.idempontence':True
+        'enable.idempotence':True
 
     }
 
