@@ -1,0 +1,10 @@
+Metadata-Version: 2.4
+Name: real-time-fraud-detection-engine-end-to-end-pipeline
+Version: 0.1.0
+Summary: Add your description here
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: confluent-kafka>=2.14.2
+Requires-Dist: faker>=40.21.0
+Requires-Dist: numpy>=2.4.6
+Requires-Dist: pytest>=9.0.3

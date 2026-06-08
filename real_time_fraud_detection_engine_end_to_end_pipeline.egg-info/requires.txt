@@ -1,0 +1,4 @@
+confluent-kafka>=2.14.2
+faker>=40.21.0
+numpy>=2.4.6
+pytest>=9.0.3
