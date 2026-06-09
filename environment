@@ -5,9 +5,9 @@ druid_zk_service_host=zookeeper
 druid_extensions_loadList=["druid-kafka-indexing-service","druid-datasketches","postgresql-metadata-storage"]
 druid_metadata_storage_host=postgres
 druid_metadata_storage_type=postgresql
-druid_metadata_storage_connector_connectURI=jdbc:postgresql://postgres:5432/druid?user=druid&password=Kidathegreat058
+druid_metadata_storage_connector_connectURI=jdbc:postgresql://postgres:5432/druid?user=druid&password=Kidathegreat
 druid_metadata_storage_connector_user=druid
-druid_metadata_storage_connector_password=Kidathegreat058
+druid_metadata_storage_connector_password=Kidathegreat
 
 druid_storage_type=local
 druid_storage_storageDirectory=/opt/shared/segments

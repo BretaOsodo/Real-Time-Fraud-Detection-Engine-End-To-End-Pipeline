@@ -32,17 +32,17 @@ services:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: "broker,controller"
 
-      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:29093"
+      KAFKA_LISTENERS: "INTERNAL://0.0.0.0:29092,EXTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:29093"
 
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka:29092,EXTERNAL://localhost:9092"
 
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT"
 
       KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
 
       KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:29093"
 
-      KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
 
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
@@ -53,17 +53,18 @@ services:
 
     networks:
       - data_pipeline
-
+  
   kafdrop:
     image: obsidiandynamics/kafdrop:latest
     container_name: kafdrop
-    restart: unless-stopped
+
     ports:
       - "9000:9000"
+
     environment:
-      KAFKA_BROKERCONNECT: "kafka-broker-1:19092,kafka-broker-2:19092"
+      KAFKA_BROKERCONNECT: "kafka:29092"
       JVM_OPTS: "-Xms32M -Xmx128M"
-      SERVER_SERVLET_CONTEXTPATH: "/"
+
     depends_on:
       - kafka
 
@@ -139,8 +140,9 @@ services:
       - "2181:2181"
     environment:
       - ZOO_MY_ID=1
+      - ZOO_4LW_COMMANDS_WHITELIST=ruok,stat,srvr,conf,mntr
     healthcheck:
-      test: [ "CMD", "bash", "-c", "echo ruok | nc localhost 2181" ]
+      test: ["CMD-SHELL", "echo ruok | nc -w 2 localhost 2181 | grep imok"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -157,7 +159,7 @@ services:
     volumes:
       - metadata_data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_PASSWORD=Kidathegreat058
+      - POSTGRES_PASSWORD=Kidathegreat
       - POSTGRES_USER=druid
       - POSTGRES_DB=druid
     networks:
@@ -174,7 +176,7 @@ services:
       - zookeeper
       - postgres
     ports:
-      - "8084:8084"
+      - "8081:8081"
     command:
       - coordinator
     env_file:
