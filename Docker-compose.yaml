@@ -5,6 +5,8 @@ networks:
 volumes:
   kafka-data:
   postgres-db-volume:
+  prometheus-data:
+  grafana-data: {}
 
   metadata_data: {}
   middle_var: {}
@@ -25,6 +27,13 @@ services:
 
     ports:
       - "9092:9092"
+
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list > /dev/null 2>&1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
 
     environment:
       CLUSTER_ID: bgVKLUurTM6-Wx0gyGaPxQ
@@ -275,3 +284,75 @@ services:
       - SUPERSET_SECRET_KEY=your_secret_key_here
     networks:
       - data_pipeline
+  prometheus:
+    image: prom/prometheus:v3.0.0
+    container_name: prometheus
+    ports:
+      - "9094:9090"
+    volumes:
+      - ./monitoring/prometheus:/etc/prometheus
+    depends_on:
+      - kafka
+    networks:
+      - data_pipeline
+  alertmanager:
+    image: prom/alertmanager
+    ports:
+      - "59093:9093"
+    networks:
+      - data_pipeline
+
+  kafka-exporter:
+    image: danielqsj/kafka-exporter
+    container_name: kafka-exporter
+    command: 
+      - "--kafka.server=kafka:9092"
+      - '--verbosity=1'
+    ports:
+      - "9308:9308"
+    depends_on:
+      - kafka
+    networks:
+      - data_pipeline
+  
+  #grafana service 
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - data_pipeline
+ 
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: postgres-exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://druid:druid123@postgres:5432/druid?sslmode=disable"
+    ports:
+      - "9187:9187"
+    depends_on:
+      - postgres
+    networks:
+      - data_pipeline
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    ports:
+      - "8084:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - data_pipeline
+    restart: unless-stopped
+
+

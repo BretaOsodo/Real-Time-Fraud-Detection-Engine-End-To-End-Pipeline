@@ -215,3 +215,137 @@ class TestSuperset:
         """Superset web UI should return HTTP 200 on the root path."""
         assert wait_for_http("http://localhost:8088/health", timeout=120), \
             "Superset /health did not return HTTP 200"
+        
+class TestPrometheus:
+ 
+    def test_prometheus_port_is_open(self):
+        """Prometheus should be listening on port 9094."""
+        assert wait_for_port("localhost", 9094, timeout=60), \
+            "Prometheus port 9094 is not open after 60s"
+ 
+    def test_prometheus_ui_is_reachable(self):
+        """Prometheus web UI should respond on port 9094."""
+        assert wait_for_http("http://localhost:9094", timeout=60), \
+            "Prometheus UI did not return HTTP 200"
+ 
+    def test_prometheus_is_healthy(self):
+        """Prometheus /-/healthy endpoint should return HTTP 200."""
+        assert wait_for_http("http://localhost:9094/-/healthy", timeout=60), \
+            "Prometheus /-/healthy did not return HTTP 200"
+ 
+    def test_prometheus_is_ready(self):
+        """Prometheus /-/ready endpoint should return HTTP 200."""
+        assert wait_for_http("http://localhost:9094/-/ready", timeout=60), \
+            "Prometheus /-/ready did not return HTTP 200"
+ 
+    def test_prometheus_scrape_targets(self):
+        """Prometheus should have at least one scrape target configured."""
+        assert wait_for_port("localhost", 9094, timeout=60)
+        r = requests.get("http://localhost:9094/api/v1/targets", timeout=10)
+        assert r.status_code == 200, "Prometheus targets API failed"
+        data = r.json()
+        targets = data.get("data", {}).get("activeTargets", [])
+        assert len(targets) > 0, "No active scrape targets found in Prometheus"
+ 
+ 
+# Alertmanager 
+ 
+class TestAlertmanager:
+ 
+    def test_alertmanager_port_is_open(self):
+        """Alertmanager should be listening on port 59093."""
+        assert wait_for_port("localhost", 59093, timeout=60), \
+            "Alertmanager port 59093 is not open after 60s"
+ 
+    def test_alertmanager_ui_is_reachable(self):
+        """Alertmanager web UI should respond on port 59093."""
+        assert wait_for_http("http://localhost:59093", timeout=60), \
+            "Alertmanager UI did not return HTTP 200"
+ 
+    def test_alertmanager_is_healthy(self):
+        """Alertmanager /-/healthy endpoint should return HTTP 200."""
+        assert wait_for_http("http://localhost:59093/-/healthy", timeout=60), \
+            "Alertmanager /-/healthy did not return HTTP 200"
+ 
+    def test_alertmanager_api_status(self):
+        """Alertmanager API should return cluster status."""
+        assert wait_for_port("localhost", 59093, timeout=60)
+        r = requests.get("http://localhost:59093/api/v2/status", timeout=10)
+        assert r.status_code == 200, "Alertmanager /api/v2/status failed"
+        data = r.json()
+        assert "cluster" in data, "Alertmanager status missing cluster info"
+ 
+ 
+#Kafka Exporter 
+ 
+class TestKafkaExporter:
+ 
+    def test_kafka_exporter_port_is_open(self):
+        """Kafka exporter should be listening on port 9308."""
+        assert wait_for_port("localhost", 9308, timeout=60), \
+            "Kafka exporter port 9308 is not open after 60s"
+ 
+    def test_kafka_exporter_metrics_endpoint(self):
+        """Kafka exporter /metrics should return HTTP 200 with Prometheus metrics."""
+        assert wait_for_port("localhost", 9308, timeout=60)
+        assert wait_for_http("http://localhost:9308/metrics", timeout=60), \
+            "Kafka exporter /metrics did not return HTTP 200"
+ 
+    def test_kafka_exporter_has_broker_metrics(self):
+        """Kafka exporter metrics should include broker up metric."""
+        assert wait_for_port("localhost", 9308, timeout=60)
+        r = requests.get("http://localhost:9308/metrics", timeout=10)
+        assert r.status_code == 200
+        assert "kafka_brokers" in r.text, \
+            "kafka_brokers metric not found — exporter may not be connected to Kafka"
+ 
+    def test_kafka_exporter_has_topic_metrics(self):
+        """Kafka exporter should expose topic partition metrics."""
+        r = requests.get("http://localhost:9308/metrics", timeout=10)
+        assert r.status_code == 200
+        assert "kafka_topic_partitions" in r.text, \
+            "kafka_topic_partitions metric not found"
+ 
+ 
+# Grafana 
+ 
+class TestGrafana:
+ 
+    def test_grafana_port_is_open(self):
+        """Grafana should be listening on port 3000."""
+        assert wait_for_port("localhost", 3000, timeout=120), \
+            "Grafana port 3000 is not open after 120s"
+ 
+    def test_grafana_ui_is_reachable(self):
+        """Grafana web UI should respond on port 3000."""
+        assert wait_for_http("http://localhost:3000", timeout=120), \
+            "Grafana UI did not return HTTP 200"
+ 
+    def test_grafana_is_healthy(self):
+        """Grafana /api/health endpoint should return HTTP 200."""
+        assert wait_for_http("http://localhost:3000/api/health", timeout=120), \
+            "Grafana /api/health did not return HTTP 200"
+ 
+    def test_grafana_health_details(self):
+        """Grafana health response should report database ok."""
+        assert wait_for_port("localhost", 3000, timeout=120)
+        r = requests.get("http://localhost:3000/api/health", timeout=10)
+        assert r.status_code == 200
+        data = r.json()
+        assert data.get("database") == "ok", \
+            f"Grafana database not ok: {data}"
+ 
+    def test_grafana_datasources_configured(self):
+        """Grafana should have at least one datasource provisioned."""
+        assert wait_for_port("localhost", 3000, timeout=120)
+        r = requests.get(
+            "http://localhost:3000/api/datasources",
+            auth=("admin", "admin"),
+            timeout=10,
+        )
+        assert r.status_code == 200, \
+            "Grafana datasources API failed — check admin credentials"
+        datasources = r.json()
+        assert len(datasources) > 0, \
+            "No datasources configured in Grafana — check provisioning files"
+ 

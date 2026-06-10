@@ -1,0 +1,160 @@
+{
+    "title":  "Postgres - Druid Metadata",
+    "uid":  "postgres-druid",
+    "timezone":  "browser",
+    "refresh":  "30s",
+    "panels":  [
+                   {
+                       "id":  1,
+                       "title":  "Postgres Up",
+                       "type":  "stat",
+                       "gridPos":  {
+                                       "x":  0,
+                                       "y":  0,
+                                       "w":  4,
+                                       "h":  4
+                                   },
+                       "targets":  [
+                                       {
+                                           "expr":  "pg_up",
+                                           "legendFormat":  "Up",
+                                           "datasource":  {
+                                                              "type":  "prometheus",
+                                                              "uid":  "PB125CF2E8749F955"
+                                                          }
+                                       }
+                                   ],
+                       "fieldConfig":  {
+                                           "defaults":  {
+                                                            "thresholds":  {
+                                                                               "steps":  [
+                                                                                             {
+                                                                                                 "color":  "red",
+                                                                                                 "value":  0
+                                                                                             },
+                                                                                             {
+                                                                                                 "color":  "green",
+                                                                                                 "value":  1
+                                                                                             }
+                                                                                         ]
+                                                                           }
+                                                        }
+                                       },
+                       "datasource":  {
+                                          "type":  "prometheus",
+                                          "uid":  "PB125CF2E8749F955"
+                                      }
+                   },
+                   {
+                       "id":  2,
+                       "title":  "Active Connections",
+                       "type":  "timeseries",
+                       "gridPos":  {
+                                       "x":  4,
+                                       "y":  0,
+                                       "w":  10,
+                                       "h":  8
+                                   },
+                       "targets":  [
+                                       {
+                                           "expr":  "pg_stat_activity_count",
+                                           "legendFormat":  "Connections",
+                                           "datasource":  {
+                                                              "type":  "prometheus",
+                                                              "uid":  "PB125CF2E8749F955"
+                                                          }
+                                       }
+                                   ],
+                       "datasource":  {
+                                          "type":  "prometheus",
+                                          "uid":  "PB125CF2E8749F955"
+                                      }
+                   },
+                   {
+                       "id":  3,
+                       "title":  "Transactions per Second",
+                       "type":  "timeseries",
+                       "gridPos":  {
+                                       "x":  14,
+                                       "y":  0,
+                                       "w":  10,
+                                       "h":  8
+                                   },
+                       "targets":  [
+                                       {
+                                           "expr":  "rate(pg_stat_database_xact_commit{datname=\"druid\"}[1m])",
+                                           "legendFormat":  "Commits/s",
+                                           "datasource":  {
+                                                              "type":  "prometheus",
+                                                              "uid":  "PB125CF2E8749F955"
+                                                          }
+                                       },
+                                       {
+                                           "expr":  "rate(pg_stat_database_xact_rollback{datname=\"druid\"}[1m])",
+                                           "legendFormat":  "Rollbacks/s",
+                                           "datasource":  {
+                                                              "type":  "prometheus",
+                                                              "uid":  "PB125CF2E8749F955"
+                                                          }
+                                       }
+                                   ],
+                       "datasource":  {
+                                          "type":  "prometheus",
+                                          "uid":  "PB125CF2E8749F955"
+                                      }
+                   },
+                   {
+                       "id":  4,
+                       "title":  "Dead Tuples by Table",
+                       "type":  "bargauge",
+                       "gridPos":  {
+                                       "x":  0,
+                                       "y":  8,
+                                       "w":  12,
+                                       "h":  8
+                                   },
+                       "targets":  [
+                                       {
+                                           "expr":  "pg_stat_user_tables_n_dead_tup",
+                                           "legendFormat":  "{{ relname }}",
+                                           "instant":  true,
+                                           "datasource":  {
+                                                              "type":  "prometheus",
+                                                              "uid":  "PB125CF2E8749F955"
+                                                          }
+                                       }
+                                   ],
+                       "datasource":  {
+                                          "type":  "prometheus",
+                                          "uid":  "PB125CF2E8749F955"
+                                      }
+                   },
+                   {
+                       "id":  5,
+                       "title":  "Table Size (MB)",
+                       "type":  "bargauge",
+                       "gridPos":  {
+                                       "x":  12,
+                                       "y":  8,
+                                       "w":  12,
+                                       "h":  8
+                                   },
+                       "targets":  [
+                                       {
+                                           "expr":  "pg_relation_size / 1024 / 1024",
+                                           "legendFormat":  "{{ relname }}",
+                                           "instant":  true,
+                                           "datasource":  {
+                                                              "type":  "prometheus",
+                                                              "uid":  "PB125CF2E8749F955"
+                                                          }
+                                       }
+                                   ],
+                       "datasource":  {
+                                          "type":  "prometheus",
+                                          "uid":  "PB125CF2E8749F955"
+                                      }
+                   }
+               ],
+    "schemaVersion":  38
+}

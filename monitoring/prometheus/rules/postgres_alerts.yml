@@ -1,0 +1,39 @@
+groups:
+  - name: postgres_alerts
+    rules:
+
+      - alert: PostgresDown
+        expr: pg_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Postgres is down"
+          description: "Postgres instance is not reachable. Druid metadata storage is unavailable."
+
+      - alert: PostgresHighConnections
+        expr: pg_stat_activity_count > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Postgres has too many connections ({{ $value }})"
+          description: "Postgres connection count is high. Max is typically 100."
+
+      - alert: PostgresDeadTuplesHigh
+        expr: pg_stat_user_tables_n_dead_tup > 100000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High dead tuples in {{ $labels.relname }}"
+          description: "Table {{ $labels.relname }} has {{ $value }} dead tuples. Consider running VACUUM."
+
+      - alert: PostgresSlowQueries
+        expr: pg_stat_activity_max_tx_duration > 300
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Postgres has slow queries running > 5 minutes"
+          description: "Long-running query detected. May indicate lock contention."
