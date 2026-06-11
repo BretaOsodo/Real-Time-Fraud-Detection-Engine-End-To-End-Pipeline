@@ -1,0 +1,33 @@
+{
+  "type": "record",
+  "name": "PesapalTokenised",
+  "namespace": "com.fraud_detection.tokenised",
+  "doc": "Tokenised Pesapal IPN callback. Customer email, phone, and payment account replaced with HMAC-SHA256 tokens.",
+  "fields": [
+    {"name": "transaction_id", "type": "string", "doc": "Unique transaction identifier — pesapal_transaction_tracking_id."},
+    {"name": "source", "type": "string", "default": "PESAPAL", "doc": "Payment source identifier."},
+    {"name": "source_type", "type": "string", "default": "IPN_CALLBACK", "doc": "Message source type."},
+    {"name": "merchant_reference_token", "type": ["null", "string"], "default": null, "doc": "Pseudonymised merchant reference token. Format: PESAPAL_MERCHANT_{HASH}."},
+    {"name": "tracking_id", "type": ["null", "string"], "default": null, "doc": "Pesapal transaction tracking ID (non-sensitive, retained for reconciliation)."},
+    {"name": "payment_status", "type": ["null", "string"], "default": null, "doc": "Payment status: COMPLETED, PENDING, FAILED, INVALID."},
+    {"name": "payment_method", "type": ["null", "string"], "default": null, "doc": "Payment method: VISA, MASTERCARD, MPESA, AIRTEL_MONEY."},
+    {"name": "timestamp", "type": "string", "doc": "ISO-8601 processing timestamp."},
+    {"name": "event_time_ms", "type": "long", "doc": "Unix epoch milliseconds of original event."},
+    {"name": "tokenisation_timestamp", "type": "string", "doc": "ISO-8601 timestamp of tokenisation."},
+    {"name": "customer_email_token", "type": ["null", "string"], "default": null, "doc": "Pseudonymised customer email token. Format: PESAPAL_EMAIL_{HASH}. Email normalised to lowercase before tokenisation."},
+    {"name": "customer_phone_token", "type": ["null", "string"], "default": null, "doc": "Pseudonymised customer phone token. Format: PESAPAL_PHONE_{HASH}. Phone normalised to E.164 before tokenisation."},
+    {"name": "payment_account_token", "type": ["null", "string"], "default": null, "doc": "Pseudonymised payment account token. Card numbers use format-preserving tokenisation preserving BIN and last4. Other accounts use PESAPAL_ACC_{HASH}."},
+    {"name": "token_from_cache", "type": "boolean", "default": false, "doc": "True if token was served from in-memory cache."},
+    {"name": "tokenisation_method", "type": "string", "default": "HMAC_SHA256_PSEUDONYMISATION", "doc": "Algorithm used for tokenisation."},
+    {"name": "amount", "type": ["null", "double"], "default": null, "doc": "Transaction amount."},
+    {"name": "currency", "type": ["null", "string"], "default": null, "doc": "ISO 4217 currency code e.g. KES, USD, UGX, TZS."},
+    {"name": "confirmation_code", "type": ["null", "string"], "default": null, "doc": "Pesapal confirmation code."},
+    {"name": "description", "type": ["null", "string"], "default": null, "doc": "Payment description."},
+    {"name": "customer_first_name", "type": ["null", "string"], "default": null, "doc": "Customer first name (non-sensitive, retained for review)."},
+    {"name": "customer_last_name", "type": ["null", "string"], "default": null, "doc": "Customer last name."},
+    {"name": "pesapal_notification_type", "type": ["null", "string"], "default": null, "doc": "Pesapal notification type."},
+    {"name": "pesapal_payment_id", "type": ["null", "string"], "default": null, "doc": "Pesapal internal payment ID."},
+    {"name": "error_code", "type": ["null", "string"], "default": null, "doc": "Error code if transaction failed."},
+    {"name": "error_message", "type": ["null", "string"], "default": null, "doc": "Error message if transaction failed."}
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "type": "record",
+  "name": "MpesaTokenised",
+  "namespace": "com.fraud_detection.tokenised",
+  "doc": "Tokenised M-Pesa Daraja webhook transaction. MSISDN and business account replaced with HMAC-SHA256 tokens.",
+  "fields": [
+    {"name": "transaction_id", "type": "string", "doc": "Unique transaction identifier — TransID from Daraja."},
+    {"name": "source", "type": "string", "default": "MPESA", "doc": "Payment source identifier."},
+    {"name": "source_type", "type": "string", "default": "DARAJA_WEBHOOK", "doc": "Message source type."},
+    {"name": "transaction_type", "type": ["null", "string"], "default": null, "doc": "M-Pesa transaction type e.g. CustomerPayBillOnline, STKPush."},
+    {"name": "timestamp", "type": "string", "doc": "ISO-8601 processing timestamp."},
+    {"name": "event_time_ms", "type": "long", "doc": "Unix epoch milliseconds of original event."},
+    {"name": "tokenisation_timestamp", "type": "string", "doc": "ISO-8601 timestamp of tokenisation."},
+    {"name": "msisdn_token", "type": ["null", "string"], "default": null, "doc": "Pseudonymised MSISDN token. Format: MPESA_MSISDN_{HASH}. MSISDN normalised to E.164 before tokenisation."},
+    {"name": "account_token", "type": ["null", "string"], "default": null, "doc": "Pseudonymised business shortcode token. Format: MPESA_ACC_{HASH}."},
+    {"name": "token_from_cache", "type": "boolean", "default": false, "doc": "True if MSISDN token was served from in-memory cache (repeat customer)."},
+    {"name": "tokenisation_method", "type": "string", "default": "HMAC_SHA256_PSEUDONYMISATION", "doc": "Algorithm used for tokenisation."},
+    {"name": "amount", "type": ["null", "double"], "default": null, "doc": "Transaction amount in KES."},
+    {"name": "currency", "type": "string", "default": "KES", "doc": "Currency — always KES for M-Pesa."},
+    {"name": "bill_ref_number", "type": ["null", "string"], "default": null, "doc": "Bill reference number from Daraja."},
+    {"name": "invoice_number", "type": ["null", "string"], "default": null, "doc": "Invoice number."},
+    {"name": "transaction_receipt", "type": ["null", "string"], "default": null, "doc": "M-Pesa transaction receipt number."},
+    {"name": "mpesa_receipt_number", "type": ["null", "string"], "default": null, "doc": "M-Pesa receipt number for STKPush."},
+    {"name": "first_name", "type": ["null", "string"], "default": null, "doc": "Customer first name (non-sensitive, retained for review)."},
+    {"name": "last_name", "type": ["null", "string"], "default": null, "doc": "Customer last name."},
+    {"name": "result_code", "type": ["null", "string"], "default": null, "doc": "Daraja result code."},
+    {"name": "result_desc", "type": ["null", "string"], "default": null, "doc": "Daraja result description."},
+    {"name": "transaction_role", "type": "string", "default": "CUSTOMER", "doc": "Role in transaction: CUSTOMER or MERCHANT."},
+    {"name": "third_party_trans_id", "type": ["null", "string"], "default": null, "doc": "Third-party transaction ID."},
+    {"name": "merchant_request_id", "type": ["null", "string"], "default": null, "doc": "Merchant request ID for STKPush."},
+    {"name": "checkout_request_id", "type": ["null", "string"], "default": null, "doc": "Checkout request ID for STKPush."}
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "type": "record",
+  "name": "FlutterTokenised",
+  "namespace": "com.fraud_detection.tokenised",
+  "doc": "Tokenised Flutterwave transaction. All sensitive PAN and customer PII has been pseudonymised via HMAC-SHA256.",
+  "fields": [
+
+    {
+      "name": "transaction_id",
+      "type": "string",
+      "doc": "Unique transaction identifier — flw_ref if available, else tx_ref, else generated UUID."
+    },
+    {
+      "name": "source",
+      "type": "string",
+      "default": "FLUTTERWAVE",
+      "doc": "Payment source identifier."
+    },
+    {
+      "name": "source_type",
+      "type": "string",
+      "default": "WEBHOOK",
+      "doc": "Message source type — always WEBHOOK for Flutterwave."
+    },
+    {
+      "name": "event",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Flutterwave event type e.g. charge.completed, transfer.completed."
+    },
+    {
+      "name": "tx_ref",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Merchant transaction reference."
+    },
+    {
+      "name": "flw_ref",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Flutterwave internal reference."
+    },
+    {
+      "name": "timestamp",
+      "type": "string",
+      "doc": "ISO-8601 timestamp of when the transaction was processed by the tokeniser."
+    },
+    {
+      "name": "event_time_ms",
+      "type": "long",
+      "doc": "Unix epoch milliseconds of the original event."
+    },
+    {
+      "name": "tokenisation_timestamp",
+      "type": "string",
+      "doc": "ISO-8601 timestamp of when tokenisation was applied."
+    },
+
+    {
+      "name": "card_token",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Pseudonymised card token. Format: FLW_{BIN}_TOKEN_{HASH}_{LAST4}. Preserves BIN and last4 for analytics."
+    },
+    {
+      "name": "customer_token",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Pseudonymised customer token. Format: FLW_CUST_{HASH}."
+    },
+    {
+      "name": "ref_token",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Pseudonymised transaction reference token. Format: FLW_REF_{HASH}."
+    },
+    {
+      "name": "token_from_cache",
+      "type": "boolean",
+      "default": false,
+      "doc": "True if the card token was served from the in-memory cache (repeat card)."
+    },
+    {
+      "name": "tokenisation_method",
+      "type": "string",
+      "default": "HMAC_SHA256_PSEUDONYMISATION",
+      "doc": "Algorithm used for tokenisation."
+    },
+
+    {
+      "name": "amount",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Transaction amount in the original currency."
+    },
+    {
+      "name": "currency",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "ISO 4217 currency code e.g. KES, USD, GBP."
+    },
+    {
+      "name": "status",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Transaction status: successful, pending, failed."
+    },
+    {
+      "name": "payment_type",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Payment method: card, mpesa, banktransfer."
+    },
+    {
+      "name": "charge_type",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Charge type from Flutterwave e.g. normal, preauth."
+    },
+
+    {
+      "name": "bin",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Bank Identification Number (first 6 digits). Retained for fraud feature engineering."
+    },
+    {
+      "name": "last4",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Last 4 digits of the card. Retained for fraud feature engineering."
+    },
+
+    {
+      "name": "device_fingerprint",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "MD5 device fingerprint from Flutterwave."
+    },
+    {
+      "name": "auth_model",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Authentication model used: PIN, NOAUTH, VBV, OTP."
+    },
+    {
+      "name": "processor_response",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Raw processor response: Approved, Declined."
+    },
+
+    {
+      "name": "customer_email_hash",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "First 16 chars of MD5 hash of customer email. Non-reversible. Used for cross-channel linking without storing PII."
+    }
+  ]
+}
