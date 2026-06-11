@@ -318,3 +318,4 @@ class TestStats:
         assert tokeniser.stats['tokenisation_total_ms'] > 0
 
 
+

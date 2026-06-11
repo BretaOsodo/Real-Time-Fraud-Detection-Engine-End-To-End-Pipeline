@@ -26,7 +26,7 @@ services:
     hostname: kafka
 
     ports:
-      - "9092:9092"
+      - "127.0.0.1:9092:9092"
 
     healthcheck:
       test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list > /dev/null 2>&1"]
@@ -68,7 +68,7 @@ services:
     container_name: kafdrop
 
     ports:
-      - "9000:9000"
+      - "127.0.0.1:9000:9000"
 
     environment:
       KAFKA_BROKERCONNECT: "kafka:29092"
@@ -80,7 +80,9 @@ services:
     networks:
       - data_pipeline
   spark-master:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
     container_name: spark-master
     environment:
       AWS_ACCESS_KEY_ID: minio_admin
@@ -90,8 +92,8 @@ services:
       - /opt/spark/bin/spark-class
       - org.apache.spark.deploy.master.Master
     ports:
-      - "9090:8080"
-      - "7077:7077"
+      - "127.0.0.1:9090:8080"
+      - "127.0.0.1:7077:7077"
     volumes:
       - ./:/opt/project
     networks:
@@ -99,7 +101,9 @@ services:
     restart: unless-stopped
 
   spark-worker-1:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: spark-worker
     command:
       - /opt/spark/bin/spark-class
@@ -120,7 +124,9 @@ services:
     restart: unless-stopped
 
   spark-worker-2:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: spark-worker-2
     command:
       - /opt/spark/bin/spark-class
@@ -146,7 +152,7 @@ services:
     image: zookeeper:3.9
     container_name: zookeeper
     ports:
-      - "2181:2181"
+      - "127.0.0.1:2181:2181"
     environment:
       - ZOO_MY_ID=1
       - ZOO_4LW_COMMANDS_WHITELIST=ruok,stat,srvr,conf,mntr
@@ -164,7 +170,7 @@ services:
     container_name: postgres
     image: postgres:16.0
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - metadata_data:/var/lib/postgresql/data
     environment:
@@ -185,7 +191,7 @@ services:
       - zookeeper
       - postgres
     ports:
-      - "8081:8081"
+      - "127.0.0.1:8081:8081"
     command:
       - coordinator
     env_file:
@@ -205,7 +211,7 @@ services:
       - postgres
       - coordinator
     ports:
-      - "8082:8082"
+      - "127.0.0.1:8082:8082"
     command:
       - broker
     env_file:
@@ -225,7 +231,7 @@ services:
       - postgres
       - coordinator
     ports:
-      - "8083:8083"
+      - "127.0.0.1:8083:8083"
     command:
       historical
     env_file:
@@ -248,7 +254,7 @@ services:
       - postgres
       - coordinator
     ports:
-      - "8091:8091"
+      - "127.0.0.1:8091:8091"
       - "8100-8105:8100-8105"
     env_file:
       - environment
@@ -266,7 +272,7 @@ services:
       - postgres
       - coordinator
     ports:
-      - "8888:8888"
+      - "127.0.0.1:8888:8888"
     command:
       - router
     env_file:
@@ -274,10 +280,12 @@ services:
     networks:
       - data_pipeline
   superset:
-    image: apache/superset:latest
+    build: 
+      context: .
+      dockerfile: Dockerfile.superset
     container_name: superset
     ports:
-      - "8088:8088"
+      - "127.0.0.1:8088:8088"
     volumes:
       - ./superset-requirements.txt:/app/requirements-local.txt
     environment:
@@ -288,7 +296,7 @@ services:
     image: prom/prometheus:v3.0.0
     container_name: prometheus
     ports:
-      - "9094:9090"
+      - "127.0.0.1:9094:9090"
     volumes:
       - ./monitoring/prometheus:/etc/prometheus
     depends_on:
@@ -298,7 +306,7 @@ services:
   alertmanager:
     image: prom/alertmanager
     ports:
-      - "59093:9093"
+      - "127.0.0.1:59093:9093"
     networks:
       - data_pipeline
 
@@ -306,10 +314,10 @@ services:
     image: danielqsj/kafka-exporter
     container_name: kafka-exporter
     command: 
-      - "--kafka.server=kafka:9092"
+      - "--kafka.server=kafka:29092"
       - '--verbosity=1'
     ports:
-      - "9308:9308"
+      - "127.0.0.1:9308:9308"
     depends_on:
       - kafka
     networks:
@@ -320,7 +328,7 @@ services:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     volumes:
       - grafana-data:/var/lib/grafana
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
@@ -335,7 +343,7 @@ services:
     environment:
       DATA_SOURCE_NAME: "postgresql://druid:druid123@postgres:5432/druid?sslmode=disable"
     ports:
-      - "9187:9187"
+      - "127.0.0.1:9187:9187"
     depends_on:
       - postgres
     networks:
@@ -345,7 +353,7 @@ services:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
     ports:
-      - "8084:8080"
+      - "127.0.0.1:8084:8080"
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
@@ -354,5 +362,10 @@ services:
     networks:
       - data_pipeline
     restart: unless-stopped
+
+
+
+
+
 
 

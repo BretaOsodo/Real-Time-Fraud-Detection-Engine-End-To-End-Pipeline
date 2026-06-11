@@ -9,7 +9,7 @@ logger= logging.getLogger(__name__)
 #A function to produce the flutter wave transaction
 def produce_flutter_transaction():
     producer_config={
-        'bootstrap.servers':'localhost:9092',
+        'bootstrap.servers':'127.0.0.1:9092',
         'acks':'all',
         'retries':10,
         'enable.idempotence':True

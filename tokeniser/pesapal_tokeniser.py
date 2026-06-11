@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class PesapalTokeniserConfig:
-    bootstrap_servers: str = "localhost:9092"
+    bootstrap_servers: str = "127.0.0.1:9092"
     security_protocol: str = "PLAINTEXT"
     sasl_mechanism: str = "PLAIN"
     sasl_username: str = ""
@@ -679,7 +679,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description='Pesapal Tokeniser')
-    parser.add_argument('--bootstrap-servers', default='localhost:9092')
+    parser.add_argument('--bootstrap-servers', default='127.0.0.1:9092')
     parser.add_argument('--hmac-secret', default='CHANGE_ME_IN_PRODUCTION')
     parser.add_argument('--input-topic', default='pesapal_raw')
     parser.add_argument('--output-topic', default='pesapal_tokenised')

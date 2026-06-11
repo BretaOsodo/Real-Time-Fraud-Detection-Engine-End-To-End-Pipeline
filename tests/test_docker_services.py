@@ -44,13 +44,13 @@ class TestKafka:
 
     def test_kafka_port_is_open(self):
         """Kafka broker should be listening on port 9092"""
-        assert wait_for_port("localhost",9092, timeout=60),\
+        assert wait_for_port("127.0.0.1",9092, timeout=60),\
         "kafka port 9092 is not open after 60s"
 
     def test_kafka_broker_is_functional(self):
         """Admin client should be able to list topics from the broker"""
         admin = AdminClient({
-            "bootstrap.servers":"localhost:9092"
+            "bootstrap.servers":"127.0.0.1:9092"
         })
         metadata=admin.list_topics(timeout=15)
         assert metadata is not None,"Kafka broker did not return metadata"
@@ -60,7 +60,7 @@ class TestKafka:
 
         from confluent_kafka.admin import NewTopic
         admin = AdminClient({
-            "bootstrap.servers":"localhost:9092"
+            "bootstrap.servers":"127.0.0.1:9092"
         })
         topic_name ="test-health-check-topic"
         futures=admin.create_topics(
@@ -84,7 +84,7 @@ class TestKafdrop:
 
     def test_kafdrop_ui_is_reachable(self):
         """Kafdrop web ui should respond on port 9000"""
-        assert wait_for_port("localhost",9000,timeout=60),\
+        assert wait_for_port("127.0.0.1",9000,timeout=60),\
         "Kafdrop port 9000 is not open after 60s"
 
         assert wait_for_http("http://localhost:9000", timeout=60),\
@@ -96,13 +96,13 @@ class TestSpark:
 
     def test_spark_master_ui_is_reachable(self):
         """Spark master wed ui should respond om port 9090"""
-        assert wait_for_port("localhost",9090,timeout=90),\
+        assert wait_for_port("127.0.0.1",9090,timeout=90),\
         "Spark master port 9090 is not open after 90s"
         assert wait_for_http("http://localhost:9090",timeout=90),\
         "Spark master Ui did not return HTTP 200"
 
     def test_spark_master_rpc_port_is_open(self):
-        assert wait_for_port("localhost",7077,timeout=60),\
+        assert wait_for_port("127.0.0.1",7077,timeout=60),\
         "Spark master RPC port 7077 is not open after 60s"
 
     def test_spark_workers_registered(self):
@@ -121,13 +121,13 @@ class TestZookeeper:
  
     def test_zookeeper_port_is_open(self):
         """Zookeeper should be listening on port 2181."""
-        assert wait_for_port("localhost", 2181, timeout=60), \
+        assert wait_for_port("127.0.0.1", 2181, timeout=60), \
             "Zookeeper port 2181 is not open after 60s"
  
     def test_zookeeper_responds_to_ruok(self):
         """Zookeeper four-letter 'ruok' command should return 'imok'."""
-        assert wait_for_port("localhost", 2181, timeout=60)
-        with socket.create_connection(("localhost", 2181), timeout=5) as s:
+        assert wait_for_port("127.0.0.1", 2181, timeout=60)
+        with socket.create_connection(("127.0.0.1", 2181), timeout=5) as s:
             s.sendall(b"ruok")
             response = s.recv(1024).decode("utf-8")
         assert response == "imok", \
@@ -140,7 +140,7 @@ class TestPostgres:
  
     def test_postgres_port_is_open(self):
         """Postgres should be listening on port 5432."""
-        assert wait_for_port("localhost", 5432, timeout=60), \
+        assert wait_for_port("127.0.0.1", 5432, timeout=60), \
             "Postgres port 5432 is not open after 60s"
  
     def test_postgres_accepts_connection(self):
@@ -170,28 +170,28 @@ class TestDruid:
  
     def test_druid_router_is_reachable(self):
         """Druid router (main UI) should respond on port 8888."""
-        assert wait_for_port("localhost", 8888, timeout=120), \
+        assert wait_for_port("127.0.0.1", 8888, timeout=120), \
             "Druid router port 8888 is not open after 120s"
         assert wait_for_http("http://localhost:8888/status", timeout=120), \
             "Druid router /status did not return HTTP 200"
  
     def test_druid_broker_is_reachable(self):
         """Druid broker should respond on port 8082."""
-        assert wait_for_port("localhost", 8082, timeout=120), \
+        assert wait_for_port("127.0.0.1", 8082, timeout=120), \
             "Druid broker port 8082 is not open after 120s"
         assert wait_for_http("http://localhost:8082/status", timeout=120), \
             "Druid broker /status did not return HTTP 200"
  
     def test_druid_coordinator_is_reachable(self):
         """Druid coordinator should respond on port 8081."""
-        assert wait_for_port("localhost", 8081, timeout=120), \
+        assert wait_for_port("127.0.0.1", 8081, timeout=120), \
             "Druid coordinator port 8081 is not open after 120s"
         assert wait_for_http("http://localhost:8081/status", timeout=120), \
             "Druid coordinator /status did not return HTTP 200"
  
     def test_druid_historical_is_reachable(self):
         """Druid historical node should respond on port 8083."""
-        assert wait_for_port("localhost", 8083, timeout=120), \
+        assert wait_for_port("127.0.0.1", 8083, timeout=120), \
             "Druid historical port 8083 is not open after 120s"
         assert wait_for_http("http://localhost:8083/status", timeout=120), \
             "Druid historical /status did not return HTTP 200"
@@ -208,7 +208,7 @@ class TestSuperset:
  
     def test_superset_port_is_open(self):
         """Superset should be listening on port 8088."""
-        assert wait_for_port("localhost", 8088, timeout=120), \
+        assert wait_for_port("127.0.0.1", 8088, timeout=120), \
             "Superset port 8088 is not open after 120s"
  
     def test_superset_ui_is_reachable(self):
@@ -220,7 +220,7 @@ class TestPrometheus:
  
     def test_prometheus_port_is_open(self):
         """Prometheus should be listening on port 9094."""
-        assert wait_for_port("localhost", 9094, timeout=60), \
+        assert wait_for_port("127.0.0.1", 9094, timeout=60), \
             "Prometheus port 9094 is not open after 60s"
  
     def test_prometheus_ui_is_reachable(self):
@@ -240,7 +240,7 @@ class TestPrometheus:
  
     def test_prometheus_scrape_targets(self):
         """Prometheus should have at least one scrape target configured."""
-        assert wait_for_port("localhost", 9094, timeout=60)
+        assert wait_for_port("127.0.0.1", 9094, timeout=60)
         r = requests.get("http://localhost:9094/api/v1/targets", timeout=10)
         assert r.status_code == 200, "Prometheus targets API failed"
         data = r.json()
@@ -254,7 +254,7 @@ class TestAlertmanager:
  
     def test_alertmanager_port_is_open(self):
         """Alertmanager should be listening on port 59093."""
-        assert wait_for_port("localhost", 59093, timeout=60), \
+        assert wait_for_port("127.0.0.1", 59093, timeout=60), \
             "Alertmanager port 59093 is not open after 60s"
  
     def test_alertmanager_ui_is_reachable(self):
@@ -269,7 +269,7 @@ class TestAlertmanager:
  
     def test_alertmanager_api_status(self):
         """Alertmanager API should return cluster status."""
-        assert wait_for_port("localhost", 59093, timeout=60)
+        assert wait_for_port("127.0.0.1", 59093, timeout=60)
         r = requests.get("http://localhost:59093/api/v2/status", timeout=10)
         assert r.status_code == 200, "Alertmanager /api/v2/status failed"
         data = r.json()
@@ -282,18 +282,18 @@ class TestKafkaExporter:
  
     def test_kafka_exporter_port_is_open(self):
         """Kafka exporter should be listening on port 9308."""
-        assert wait_for_port("localhost", 9308, timeout=60), \
+        assert wait_for_port("127.0.0.1", 9308, timeout=60), \
             "Kafka exporter port 9308 is not open after 60s"
  
     def test_kafka_exporter_metrics_endpoint(self):
         """Kafka exporter /metrics should return HTTP 200 with Prometheus metrics."""
-        assert wait_for_port("localhost", 9308, timeout=60)
+        assert wait_for_port("127.0.0.1", 9308, timeout=60)
         assert wait_for_http("http://localhost:9308/metrics", timeout=60), \
             "Kafka exporter /metrics did not return HTTP 200"
  
     def test_kafka_exporter_has_broker_metrics(self):
         """Kafka exporter metrics should include broker up metric."""
-        assert wait_for_port("localhost", 9308, timeout=60)
+        assert wait_for_port("127.0.0.1", 9308, timeout=60)
         r = requests.get("http://localhost:9308/metrics", timeout=10)
         assert r.status_code == 200
         assert "kafka_brokers" in r.text, \
@@ -313,7 +313,7 @@ class TestGrafana:
  
     def test_grafana_port_is_open(self):
         """Grafana should be listening on port 3000."""
-        assert wait_for_port("localhost", 3000, timeout=120), \
+        assert wait_for_port("127.0.0.1", 3000, timeout=120), \
             "Grafana port 3000 is not open after 120s"
  
     def test_grafana_ui_is_reachable(self):
@@ -328,7 +328,7 @@ class TestGrafana:
  
     def test_grafana_health_details(self):
         """Grafana health response should report database ok."""
-        assert wait_for_port("localhost", 3000, timeout=120)
+        assert wait_for_port("127.0.0.1", 3000, timeout=120)
         r = requests.get("http://localhost:3000/api/health", timeout=10)
         assert r.status_code == 200
         data = r.json()
@@ -337,7 +337,7 @@ class TestGrafana:
  
     def test_grafana_datasources_configured(self):
         """Grafana should have at least one datasource provisioned."""
-        assert wait_for_port("localhost", 3000, timeout=120)
+        assert wait_for_port("127.0.0.1", 3000, timeout=120)
         r = requests.get(
             "http://localhost:3000/api/datasources",
             auth=("admin", "admin"),
@@ -349,3 +349,4 @@ class TestGrafana:
         assert len(datasources) > 0, \
             "No datasources configured in Grafana — check provisioning files"
  
+

@@ -17,7 +17,7 @@ from tokeniser.flutter_tokeniser import FlutterwaveTokeniser, FlutterwaveTokenis
 @pytest.fixture
 def config():
     return FlutterwaveTokeniserConfig(
-        bootstrap_servers="localhost:9092",
+        bootstrap_servers="127.0.0.1:9092",
         hmac_secret="test_secret_key_for_unit_tests",
         input_topic="flutter_raw",
         output_topic="flutter_tokenised",
@@ -607,7 +607,7 @@ class TestStats:
 class TestFlutterwaveTokeniserIntegration:
     """
     Full round-trip integration test.
-    Requires Kafka running on localhost:9092.
+    Requires Kafka running on 127.0.0.1:9092.
     Skipped automatically if Kafka is unreachable.
     """
  
@@ -615,7 +615,7 @@ class TestFlutterwaveTokeniserIntegration:
     def check_kafka(self):
         try:
             from confluent_kafka.admin import AdminClient
-            admin = AdminClient({"bootstrap.servers": "localhost:9092"})
+            admin = AdminClient({"bootstrap.servers": "127.0.0.1:9092"})
             admin.list_topics(timeout=5)
         except Exception:
             pytest.skip("Kafka not reachable — skipping integration tests")
@@ -626,7 +626,7 @@ class TestFlutterwaveTokeniserIntegration:
         import time
  
         # Ensure topics exist
-        admin = AdminClient({"bootstrap.servers": "localhost:9092"})
+        admin = AdminClient({"bootstrap.servers": "127.0.0.1:9092"})
         for topic in ["flutter_raw", "flutter_tokenised", "flutter_dlq"]:
             try:
                 admin.create_topics([NewTopic(topic, num_partitions=1, replication_factor=1)])
@@ -635,7 +635,7 @@ class TestFlutterwaveTokeniserIntegration:
  
         # Subscribe consumer before producing
         consumer = Consumer({
-            "bootstrap.servers": "localhost:9092",
+            "bootstrap.servers": "127.0.0.1:9092",
             "group.id": f"test-flutter-tokenised-{int(time.time())}",
             "auto.offset.reset": "latest",
             "enable.auto.commit": False,
@@ -644,7 +644,7 @@ class TestFlutterwaveTokeniserIntegration:
         consumer.poll(timeout=3.0)  # join group
  
         # Produce raw message
-        producer = Producer({"bootstrap.servers": "localhost:9092", "acks": "all"})
+        producer = Producer({"bootstrap.servers": "127.0.0.1:9092", "acks": "all"})
         producer.produce(
             topic="flutter_raw",
             value=json.dumps(sample_raw_transaction).encode("utf-8"),
@@ -681,3 +681,4 @@ class TestFlutterwaveTokeniserIntegration:
         assert received["card_token"].startswith("FLW_")
         assert "customer_token" in received
         assert "john@example.com" not in json.dumps(received)
+

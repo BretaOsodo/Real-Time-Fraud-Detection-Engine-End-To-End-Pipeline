@@ -1,0 +1,12 @@
+FROM apache/superset:latest
+
+USER root
+
+# Install pydruid and any other dependencies
+RUN pip install --no-cache-dir pydruid
+
+# Install requirements from your mounted file too
+COPY superset-requirements.txt /app/requirements-local.txt
+RUN pip install --no-cache-dir -r /app/requirements-local.txt
+
+USER superset

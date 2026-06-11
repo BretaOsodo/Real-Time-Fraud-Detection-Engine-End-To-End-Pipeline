@@ -339,3 +339,4 @@ class TestGrafanaFolders:
         assert "Fraud Detection" in folder_titles, \
             f"'Fraud Detection' folder not found. Folders: {folder_titles}"
  
+

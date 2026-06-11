@@ -12,7 +12,7 @@ from data_generator.data_generator import TransactionDataGenerator
 
 
 #Constants 
-BOOTSTRAP_SERVERS="localhost:9092"
+BOOTSTRAP_SERVERS="127.0.0.1:9092"
 TOPICS=[
     "visa_raw",
     "mastercard_raw",
@@ -59,7 +59,7 @@ def produce_and_consume(topic:str,records:list,timeout:float=30.0)->list:
 
     consumer.subscribe([topic])
 
-    deadline = time.time() + 10
+    deadline = time.time() + 30
 
     while not consumer.assignment():
         consumer.poll(0.5)
@@ -276,3 +276,5 @@ class TestPesapalProducer:
         for msg in received:
             assert "ipn_signature" in msg
             assert len(msg["ipn_signature"]) > 0
+
+
