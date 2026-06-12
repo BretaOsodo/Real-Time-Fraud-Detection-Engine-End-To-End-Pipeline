@@ -7,6 +7,7 @@ volumes:
   postgres-db-volume:
   prometheus-data:
   grafana-data: {}
+  superset-data: {}
 
   metadata_data: {}
   middle_var: {}
@@ -280,16 +281,26 @@ services:
     networks:
       - data_pipeline
   superset:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile.superset
     container_name: superset
     ports:
       - "127.0.0.1:8088:8088"
-    volumes:
-      - ./superset-requirements.txt:/app/requirements-local.txt
     environment:
-      - SUPERSET_SECRET_KEY=your_secret_key_here
+      SUPERSET_SECRET_KEY: "3067771c76a86285b58c68cd67f393dec95a2daf4971310b218687abc71d502a"
+      PYTHONPATH: "/app/pythonpath:/app/docker/pythonpath_dev"
+      SUPERSET_CONFIG_PATH: "/app/pythonpath/superset_config.py"
+    volumes:
+      - ./superset_config.py:/app/pythonpath/superset_config.py
+      - superset-data:/app/superset_home
+    depends_on:
+      - postgres
+      - coordinator
+      - broker
+      - historical
+      - middlemanager
+      - router
     networks:
       - data_pipeline
   prometheus:
@@ -362,6 +373,9 @@ services:
     networks:
       - data_pipeline
     restart: unless-stopped
+
+
+
 
 
 

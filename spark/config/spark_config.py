@@ -20,7 +20,7 @@ class SparkConfig:
         "MASTERCARD": "mastercard_tokenised",
         "MPESA": "mpesa_tokenised",
         "PESAPAL": "pesapal_tokenised",
-        "FLUTTERWAVE": "flutterwave_tokenised",
+        "FLUTTERWAVE": "flutter_tokenised",
     })
     OUTPUT_TOPICS: dict = field(default_factory=lambda: {
         "VISA": "visa_enriched",

@@ -8,3 +8,4 @@ Requires-Dist: confluent-kafka>=2.14.2
 Requires-Dist: faker>=40.21.0
 Requires-Dist: numpy>=2.4.6
 Requires-Dist: pytest>=9.0.3
+Requires-Dist: redis>=8.0.0

@@ -1,0 +1,93 @@
+ Image real-time-fraud-detection-engine-end-to-end-pipeline-superset Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 766B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile.superset
+#2 transferring dockerfile: 357B 0.0s done
+#2 DONE 0.1s
+
+#3 [internal] load metadata for docker.io/apache/superset:4.1.1
+#3 DONE 1.7s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [1/4] FROM docker.io/apache/superset:4.1.1@sha256:1d1fdaaeb19ce9cdba71620ee1cc6117d73813b2f3b422ce5a1bf752c247b7c0
+#6 resolve docker.io/apache/superset:4.1.1@sha256:1d1fdaaeb19ce9cdba71620ee1cc6117d73813b2f3b422ce5a1bf752c247b7c0 0.1s done
+#6 CACHED
+
+#5 [internal] load build context
+#5 transferring context: 46B done
+#5 DONE 0.0s
+
+#7 [2/4] RUN pip install --no-cache-dir pydruid
+#7 1.667 Collecting pydruid
+#7 2.520   Downloading pydruid-0.6.9.tar.gz (135 kB)
+#7 2.981   Preparing metadata (setup.py): started
+#7 3.243   Preparing metadata (setup.py): finished with status 'done'
+#7 3.247 Requirement already satisfied: requests in /usr/local/lib/python3.10/site-packages (from pydruid) (2.32.2)
+#7 3.250 Requirement already satisfied: charset-normalizer<4,>=2 in /usr/local/lib/python3.10/site-packages (from requests->pydruid) (3.3.2)
+#7 3.251 Requirement already satisfied: idna<4,>=2.5 in /usr/local/lib/python3.10/site-packages (from requests->pydruid) (3.7)
+#7 3.252 Requirement already satisfied: urllib3<3,>=1.21.1 in /usr/local/lib/python3.10/site-packages (from requests->pydruid) (1.26.18)
+#7 3.253 Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.10/site-packages (from requests->pydruid) (2024.2.2)
+#7 3.265 Building wheels for collected packages: pydruid
+#7 3.269   Building wheel for pydruid (setup.py): started
+#7 1.579   Building wheel for pydruid (setup.py): finished with status 'done'
+#7 1.580   Created wheel for pydruid: filename=pydruid-0.6.9-py2.py3-none-any.whl size=34682 sha256=173cae810da20891a83007b7856d37b6af2096fb7559d9a0d64be13982e55d3b
+#7 1.580   Stored in directory: /tmp/pip-ephem-wheel-cache-_lzoe86c/wheels/04/2f/e0/5cbedfe9dd235e579c219190094c6aa1dfcbf3f22742974e94
+#7 1.584 Successfully built pydruid
+#7 2.033 Installing collected packages: pydruid
+#7 2.122 Successfully installed pydruid-0.6.9
+#7 2.123 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#7 2.683 
+#7 2.683 [notice] A new release of pip is available: 24.3.1 -> 26.1.2
+#7 2.683 [notice] To update, run: pip install --upgrade pip
+#7 DONE 2.8s
+
+#8 [3/4] COPY superset-requirements.txt /app/requirements-local.txt
+#8 DONE 0.1s
+
+#9 [4/4] RUN pip install --no-cache-dir -r /app/requirements-local.txt
+#9 1.147 Requirement already satisfied: pydruid in /usr/local/lib/python3.10/site-packages (from -r /app/requirements-local.txt (line 1)) (0.6.9)
+#9 1.892 ERROR: Could not find a version that satisfies the requirement sqlalchemyS (from versions: none)
+#9 2.483 
+#9 2.483 [notice] A new release of pip is available: 24.3.1 -> 26.1.2
+#9 2.483 [notice] To update, run: pip install --upgrade pip
+#9 2.484 ERROR: No matching distribution found for sqlalchemyS
+#9 ERROR: process "/bin/sh -c pip install --no-cache-dir -r /app/requirements-local.txt" did not complete successfully: exit code: 1
+------
+ > [4/4] RUN pip install --no-cache-dir -r /app/requirements-local.txt:
+1.147 Requirement already satisfied: pydruid in /usr/local/lib/python3.10/site-packages (from -r /app/requirements-local.txt (line 1)) (0.6.9)
+1.892 ERROR: Could not find a version that satisfies the requirement sqlalchemyS (from versions: none)
+2.483 
+2.483 [notice] A new release of pip is available: 24.3.1 -> 26.1.2
+2.483 [notice] To update, run: pip install --upgrade pip
+2.484 ERROR: No matching distribution found for sqlalchemyS
+------
+Dockerfile.superset:10
+
+--------------------
+
+   8 |     # Install requirements from your mounted file too
+
+   9 |     COPY superset-requirements.txt /app/requirements-local.txt
+
+  10 | >>> RUN pip install --no-cache-dir -r /app/requirements-local.txt
+
+  11 |     
+
+  12 |     USER superset
+
+--------------------
+
+failed to solve: process "/bin/sh -c pip install --no-cache-dir -r /app/requirements-local.txt" did not complete successfully: exit code: 1
+
+
+
+View build details: docker-desktop://dashboard/build/default/default/obsfvd8h3wv55lkfr3p4my65h
+
