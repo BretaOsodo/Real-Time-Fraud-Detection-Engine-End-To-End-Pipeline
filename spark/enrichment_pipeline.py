@@ -513,7 +513,7 @@ class FraudEnrichmentPipeline:
         df = self.feature_engineer.compute_velocity_features(df)
 
         # Step 6: Device intelligence (Redis per-partition)
-        # df = self.redis_store.enrich_device_history(df)  # TODO: Fix for streaming
+        # df = self.redis_store.enrich_device_history(df)  
 
         # Step 7: Location features
         df = self.feature_engineer.compute_location_features(df)
@@ -608,7 +608,7 @@ class FraudEnrichmentPipeline:
                     # Serialise to JSON (more portable than Avro for initial build)
                     # Switch to to_avro() once Schema Registry is configured
                     output_df = provider_df.select(
-                        col("card_token").alias("key"),
+                        coalesce(col("card_token"), col("transaction_id")).alias("key"),
                         to_json(struct(*[
                             c for c in provider_df.columns
                             if c not in ("key",)
@@ -720,8 +720,8 @@ class FraudEnrichmentPipeline:
             logger.info("Kafka write query started")
 
             # Write metrics (separate query, separate checkpoint)
-            # metrics_query = self.metrics.write_to_prometheus(enriched_stream)
-            logger.info("Metrics query started")
+            #metrics_query = self.metrics.write_to_prometheus(enriched_stream)
+            #logger.info("Metrics query started")
 
             # Log active queries
             logger.info("Active streaming queries:")
