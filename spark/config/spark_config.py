@@ -7,7 +7,7 @@ class SparkConfig:
 
     #Kafka configurations
     KAFKA_BOOTSTRAP_SERVERS:str=os.environ.get(
-        "KAFKA_BOOTSTRAP_SERVERS","localhost:9092"
+        "KAFKA_BOOTSTRAP_SERVERS","kafka:29092"
     )
     KAFKA_SECURITY_PROTOCOL: str = os.environ.get(
         "KAFKA_SECURITY_PROTOCOL", "PLAINTEXT"
@@ -39,7 +39,8 @@ class SparkConfig:
     #SparkStreaming
     MAX_OFFSETS_PER_TRIGGER: int = int(os.environ.get("MAX_OFFSETS_PER_TRIGGER", "50000"))
     TRIGGER_INTERVAL: str = os.environ.get("TRIGGER_INTERVAL", "1 second")
-    WATERMARK_DELAY: str = os.environ.get("WATERMARK_DELAY", "60 seconds")
+    HIGH_RISK_THRESHOLD = 2000.0
+    WATERMARK_DELAY: str = os.environ.get("HIGH_RISK_THRESHOLD = 2000.0\n    WATERMARK_DELAY", "60 seconds")
     STARTING_OFFSETS: str = os.environ.get("STARTING_OFFSETS", "earliest")
 
     #Enrichment

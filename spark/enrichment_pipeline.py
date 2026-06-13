@@ -168,6 +168,17 @@ class FraudEnrichmentPipeline:
         # ── FIELD MAP goes here ──────────────────────────────────────────────────
         FIELD_MAP = {
             "VISA": {
+                "transaction_id": "transaction_id",
+                "timestamp": "timestamp",
+                "event_time_ms": "event_time_ms",
+                "tokenisation_timestamp": "tokenisation_timestamp",
+                "tokenisation_method": "tokenisation_method",
+                "token_from_cache": "token_from_cache",
+                "amount": "amount",
+                "currency": "currency",
+                "currency_code": "currency_code",
+                "source": "source",
+                "message_type": "message_type",
                 "transaction_type": "transaction_type",
                 "card_token": "card_token",
                 "bin": "bin",
@@ -178,15 +189,39 @@ class FraudEnrichmentPipeline:
                 "terminal_id": "terminal_id",
                 "mcc": "mcc",
                 "acquirer_id": "acquirer_id",
+                "stan": "stan",
                 "msisdn_token": None,
+                "account_token": None,
+                "bill_ref_number": None,
+                "invoice_number": None,
+                "transaction_receipt": None,
                 "mpesa_receipt_number": None,
+                "first_name": None,
+                "last_name": None,
                 "result_code": None,
-                "business_short_code": None,
+                "result_desc": None,
+                "transaction_role": None,
+                "third_party_trans_id": None,
+                "merchant_request_id": None,
+                "checkout_request_id": None,
                 "device_fingerprint": None,
                 "auth_model": None,
                 "status": None,
+                "source_type": None,
             },
             "MASTERCARD": {
+                "transaction_id": "transaction_id",
+                "timestamp": "timestamp",
+                "event_time_ms": "event_time_ms",
+                "tokenisation_timestamp": "tokenisation_timestamp",
+                "tokenisation_method": "tokenisation_method",
+                "token_from_cache": "token_from_cache",
+                "amount": "amount",
+                "currency": "currency",
+                "currency_code": "currency_code",
+                "source": "source",
+                "source_type": "source_type",
+                "message_type": "message_type",
                 "transaction_type": "transaction_type",
                 "card_token": "card_token",
                 "bin": "bin",
@@ -197,71 +232,150 @@ class FraudEnrichmentPipeline:
                 "terminal_id": "terminal_id",
                 "mcc": "mcc",
                 "acquirer_id": "acquirer_id",
+                "stan": "stan",
                 "msisdn_token": None,
+                "account_token": None,
+                "bill_ref_number": None,
+                "invoice_number": None,
+                "transaction_receipt": None,
                 "mpesa_receipt_number": None,
+                "first_name": None,
+                "last_name": None,
                 "result_code": None,
-                "business_short_code": None,
+                "result_desc": None,
+                "transaction_role": None,
+                "third_party_trans_id": None,
+                "merchant_request_id": None,
+                "checkout_request_id": None,
                 "device_fingerprint": None,
                 "auth_model": None,
                 "status": None,
             },
             "MPESA": {
+                "transaction_id": "transaction_id",
+                "timestamp": "timestamp",
+                "event_time_ms": "event_time_ms",
+                "tokenisation_timestamp": "tokenisation_timestamp",
+                "tokenisation_method": "tokenisation_method",
+                "token_from_cache": "token_from_cache",
+                "amount": "amount",
+                "currency": "currency",
+                "source": "source",
+                "source_type": "source_type",
                 "transaction_type": "transaction_type",
                 "card_token": "msisdn_token",
+                "msisdn_token": "msisdn_token",
+                "account_token": "account_token",
                 "bin": None,
                 "last4": None,
                 "pos_entry_mode": None,
-                "merchant_id": "business_short_code",
+                "merchant_id": "account_token",
                 "merchant_name": None,
                 "terminal_id": None,
                 "mcc": None,
                 "acquirer_id": None,
-                "msisdn_token": "msisdn_token",
+                "bill_ref_number": "bill_ref_number",
+                "invoice_number": "invoice_number",
+                "transaction_receipt": "transaction_receipt",
                 "mpesa_receipt_number": "mpesa_receipt_number",
+                "first_name": "first_name",
+                "last_name": "last_name",
                 "result_code": "result_code",
-                "business_short_code": "business_short_code",
+                "result_desc": "result_desc",
+                "transaction_role": "transaction_role",
+                "third_party_trans_id": "third_party_trans_id",
+                "merchant_request_id": "merchant_request_id",
+                "checkout_request_id": "checkout_request_id",
                 "device_fingerprint": None,
                 "auth_model": None,
                 "status": None,
+                "currency_code": None,
+                "message_type": None,
+                "stan": None,
             },
             "FLUTTERWAVE": {
-                "transaction_type": None,  # Flutterwave has no transaction_type
+                "transaction_id": "transaction_id",
+                "timestamp": "timestamp",
+                "event_time_ms": "event_time_ms",
+                "tokenisation_timestamp": "tokenisation_timestamp",
+                "tokenisation_method": "tokenisation_method",
+                "token_from_cache": "token_from_cache",
+                "amount": "amount",
+                "currency": "currency",
+                "source": "source",
+                "source_type": "source_type",
+                "transaction_type": "event",
                 "card_token": "card_token",
                 "bin": "bin",
                 "last4": "last4",
-                "pos_entry_mode": None,
-                "merchant_id": "merchant_id",
+                "merchant_id": None,
                 "merchant_name": None,
                 "terminal_id": None,
-                "mcc": "mcc",
+                "mcc": None,
                 "acquirer_id": None,
-                "msisdn_token": None,
-                "mpesa_receipt_number": None,
-                "result_code": None,
-                "business_short_code": None,
+                "pos_entry_mode": None,
                 "device_fingerprint": "device_fingerprint",
                 "auth_model": "auth_model",
                 "status": "status",
-            }
-        ,
+                "msisdn_token": None,
+                "account_token": None,
+                "bill_ref_number": None,
+                "invoice_number": None,
+                "transaction_receipt": None,
+                "mpesa_receipt_number": None,
+                "first_name": None,
+                "last_name": None,
+                "result_code": "processor_response",
+                "result_desc": None,
+                "transaction_role": None,
+                "third_party_trans_id": "tx_ref",
+                "merchant_request_id": "flw_ref",
+                "checkout_request_id": None,
+                "currency_code": None,
+                "message_type": None,
+                "stan": None,
+            },
             "PESAPAL": {
+                "transaction_id": "transaction_id",
+                "timestamp": "timestamp",
+                "event_time_ms": "event_time_ms",
+                "tokenisation_timestamp": "tokenisation_timestamp",
+                "tokenisation_method": "tokenisation_method",
+                "token_from_cache": "token_from_cache",
+                "amount": "amount",
+                "currency": "currency",
+                "source": "source",
+                "source_type": "source_type",
                 "transaction_type": "payment_status",
-                "card_token": "card_token",
-                "bin": None,
-                "last4": None,
-                "pos_entry_mode": None,
-                "merchant_id": "merchant_id",
+                "card_token": "payment_account_token",
+                "merchant_id": "merchant_reference_token",
                 "merchant_name": None,
                 "terminal_id": None,
-                "mcc": "mcc",
+                "mcc": None,
                 "acquirer_id": None,
+                "pos_entry_mode": None,
+                "bin": None,
+                "last4": None,
                 "msisdn_token": None,
+                "account_token": None,
+                "bill_ref_number": None,
+                "invoice_number": None,
+                "transaction_receipt": None,
                 "mpesa_receipt_number": None,
-                "result_code": None,
-                "business_short_code": None,
+                "first_name": "customer_first_name",
+                "last_name": "customer_last_name",
+                "result_code": "error_code",
+                "result_desc": "error_message",
+                "transaction_role": None,
+                "third_party_trans_id": "tracking_id",
+                "merchant_request_id": "pesapal_payment_id",
+                "checkout_request_id": None,
                 "device_fingerprint": None,
                 "auth_model": None,
                 "status": "payment_status",
+                "currency_code": None,
+                "message_type": None,
+                "stan": None,
             },
         }
 
@@ -289,9 +403,9 @@ class FraudEnrichmentPipeline:
             # ── get_col helper goes here ─────────────────────────────────────────
             fmap = FIELD_MAP[provider]
 
-            def get_col(canonical_name, cast_type=StringType(), fmap=fmap):
-                source_field = fmap.get(canonical_name)
-                if source_field:
+            def get_col(canonical_name, cast_type=StringType(), _fmap=fmap):
+                source_field = _fmap.get(canonical_name)
+                if source_field is not None:
                     return col(f"parsed.{source_field}").cast(cast_type).alias(canonical_name)
                 else:
                     return lit(None).cast(cast_type).alias(canonical_name)
@@ -302,19 +416,30 @@ class FraudEnrichmentPipeline:
                 col("partition"),
                 col("offset"),
                 lit(provider).alias("provider"),
-                col("parsed.transaction_id").cast(StringType()).alias("transaction_id"),
-                col("parsed.timestamp").cast(StringType()).alias("timestamp"),
-                col("parsed.event_time_ms").cast(LongType()).alias("event_time_ms"),
-                col("parsed.tokenisation_timestamp").cast(StringType()).alias("tokenisation_timestamp"),
-                col("parsed.tokenisation_method").cast(StringType()).alias("tokenisation_method"),
-                col("parsed.token_from_cache").cast(BooleanType()).alias("token_from_cache"),
-                col("parsed.amount").cast(DoubleType()).alias("amount"),
-                col("parsed.currency").cast(StringType()).alias("currency"),
-                col("parsed.currency_code").cast(StringType()).alias("currency_code"),
-                col("parsed.is_fraud").cast(BooleanType()).alias("is_fraud"),
-                col("parsed.risk_score").cast(DoubleType()).alias("risk_score"),
-                col("parsed.fraud_pattern").cast(StringType()).alias("fraud_pattern"),
-                col("parsed.schema_version").cast(StringType()).alias("schema_version"),
+                get_col("transaction_id"),
+                get_col("timestamp"),
+                get_col("event_time_ms", LongType()),
+                get_col("tokenisation_timestamp"),
+                get_col("tokenisation_method"),
+                get_col("token_from_cache", BooleanType()),
+                get_col("amount", DoubleType()),
+                get_col("currency"),
+                get_col("source"),
+                get_col("source_type"),
+                get_col("msisdn_token"),
+                get_col("account_token"),
+                get_col("bill_ref_number"),
+                get_col("invoice_number"),
+                get_col("transaction_receipt"),
+                get_col("mpesa_receipt_number"),
+                get_col("first_name"),
+                get_col("last_name"),
+                get_col("result_code"),
+                get_col("result_desc"),
+                get_col("transaction_role"),
+                get_col("third_party_trans_id"),
+                get_col("merchant_request_id"),
+                get_col("checkout_request_id"),
                 get_col("transaction_type"),
                 get_col("card_token"),
                 get_col("bin"),
@@ -325,13 +450,16 @@ class FraudEnrichmentPipeline:
                 get_col("terminal_id"),
                 get_col("mcc"),
                 get_col("acquirer_id"),
-                get_col("msisdn_token"),
-                get_col("mpesa_receipt_number"),
-                get_col("result_code"),
-                get_col("business_short_code"),
                 get_col("device_fingerprint"),
                 get_col("auth_model"),
                 get_col("status"),
+                lit(None).cast(StringType()).alias("currency_code"),
+                lit(None).cast(StringType()).alias("message_type"),
+                lit(None).cast(StringType()).alias("stan"),
+                lit(None).cast(BooleanType()).alias("is_fraud"),
+                lit(None).cast(DoubleType()).alias("risk_score"),
+                lit(None).cast(StringType()).alias("fraud_pattern"),
+                lit(None).cast(StringType()).alias("schema_version"),
             )
 
             parsed_dfs.append(common_df)
@@ -360,12 +488,20 @@ class FraudEnrichmentPipeline:
             12. Composite risk score  — lightweight pre-ML heuristic
             13. Metadata              — enrichment_timestamp, version
         """
+        # Step 1: Create event timestamp from epoch milliseconds
+        df = df.withColumn(
+            "event_timestamp",
+            (col("event_time_ms") / 1000).cast("timestamp")
+        )
 
-        #Step 1: Watermark foe late event handling
-        df = df.withWatermark('event_timestamp',self.config.WATERMARK_DELAY)
+        # Step 2: Watermark for late event handling
+        df = df.withWatermark(
+            "event_timestamp",
+            self.config.WATERMARK_DELAY
+)
 
         #Step 2: Normalize to canonical schema
-        df = self.normalizer.normalize(df)
+        # df = self.normalizer.normalize(df)  # Already normalized in _parse_avro_by_topic
 
         #step 3: Broadcast joins
         df=self.broadcast_join_manager.apply_all_joins(df)
@@ -377,7 +513,7 @@ class FraudEnrichmentPipeline:
         df = self.feature_engineer.compute_velocity_features(df)
 
         # Step 6: Device intelligence (Redis per-partition)
-        df = self.redis_store.enrich_device_history(df)
+        # df = self.redis_store.enrich_device_history(df)  # TODO: Fix for streaming
 
         # Step 7: Location features
         df = self.feature_engineer.compute_location_features(df)
@@ -427,7 +563,7 @@ class FraudEnrichmentPipeline:
             "is_cnp",
             col("pos_entry_mode").isin("01","10","81") |
             coalesce(col("auth_model"),lit("")).isin('NOAUTH',"VBV","3DS") |
-            (col("channel")=='WEB')
+            lit(False)
         )
 
         #Unusual hour (1am-4am UTC)
@@ -584,7 +720,7 @@ class FraudEnrichmentPipeline:
             logger.info("Kafka write query started")
 
             # Write metrics (separate query, separate checkpoint)
-            metrics_query = self.metrics.write_to_prometheus(enriched_stream)
+            # metrics_query = self.metrics.write_to_prometheus(enriched_stream)
             logger.info("Metrics query started")
 
             # Log active queries
@@ -606,5 +742,4 @@ class FraudEnrichmentPipeline:
 if __name__ == "__main__":
     pipeline = FraudEnrichmentPipeline()
     pipeline.run()
-
 

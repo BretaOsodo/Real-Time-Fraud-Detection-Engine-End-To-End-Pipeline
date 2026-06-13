@@ -637,7 +637,7 @@ class TestFlutterwaveTokeniserIntegration:
         consumer = Consumer({
             "bootstrap.servers": "127.0.0.1:9092",
             "group.id": f"test-flutter-tokenised-{int(time.time())}",
-            "auto.offset.reset": "latest",
+            "auto.offset.reset": "earliest",
             "enable.auto.commit": False,
         })
         consumer.subscribe(["flutter_tokenised"])

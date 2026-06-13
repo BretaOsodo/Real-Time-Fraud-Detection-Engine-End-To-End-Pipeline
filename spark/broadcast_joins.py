@@ -95,7 +95,7 @@ _BIN_SCHEMA = StructType([
     StructField("bin_prepaid",    BooleanType(), True),
 ])
 
-class BroadcastJoinManger:
+class BroadcastJoinManager:
 
     def __init__(self):
         self._spark=None

@@ -52,8 +52,8 @@ def broadcast_manager(spark):
     """Initialized BroadcastJoinManager with no Redis."""
     import sys
     sys.path.insert(0, "spark")
-    from spark.broadcast_joins import BroadcastJoinManger
-    manager = BroadcastJoinManger()
+    from spark.broadcast_joins import BroadcastJoinManager
+    manager = BroadcastJoinManager()
     manager.initialize(spark, redis_client=None)
     return manager
 
@@ -143,7 +143,7 @@ def make_canonical_row(spark, provider="VISA", amount=100.0,
         card_token=card_token,
         bin=bin,
         last4="1234",
-        amount=amount,
+        amount_usd=amount,
         currency=currency,
         currency_code=currency_code,
         merchant_id="MERC001",
