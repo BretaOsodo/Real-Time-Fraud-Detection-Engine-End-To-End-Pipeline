@@ -560,40 +560,6 @@ docker exec -it -u root spark-worker pip install redis
 docker exec -it -u root spark-worker-2 pip install redis
 ```
 
-#### 2. `FIELD_NOT_FOUND` in Avro Parsing
-
-**Cause**: Schema mismatch between Avro file and code.
-**Fix**: Ensure `schema/avro/*.avsc` files match the actual Kafka message format. Update `FIELD_MAP` in `enrichment_pipeline.py`.
-
-#### 3. `Queries with streaming sources must be executed with writeStream.start()`
-
-**Cause**: Calling `.rdd` or `.toPandas()` on a streaming DataFrame.
-**Fix**: Use `foreachBatch` for operations that need batch semantics.
-
-#### 4. Pipeline Finishes Immediately (No RUNNING Status)
-
-**Cause**: Metrics query or output write failing.
-**Fix**: 
-- Comment out `metrics.write_to_prometheus` if Prometheus is not running
-- Ensure output Kafka topics exist
-- Check `card_token` is not null (use `coalesce` with `transaction_id`)
-
-#### 5. `KafkaException: Timed Out`
-
-**Cause**: Kafka broker not reachable from test host.
-**Fix**: Use `localhost:9092` instead of `127.0.0.1:9092` in tests, or run tests inside Docker network.
-
-#### 6. `IndentationError: unexpected indent`
-
-**Cause**: Mixed tabs/spaces or incorrect indentation in Python file.
-**Fix**: Use spaces (4 per indent) consistently. Run `autopep8` or `black` formatter.
-
-### Debug Mode
-
-Enable verbose logging:
-```python
-logging.basicConfig(level=logging.DEBUG)
-```
 
 Check Spark UI for detailed execution plans:
 - http://127.0.0.1:9090 (Spark Master)
@@ -662,21 +628,3 @@ Manages broadcast joins for reference data.
 
 ---
 
-## License
-
-MIT License - see LICENSE file for details.
-
----
-
-## Contact
-
-For questions or support, please open an issue on GitHub.
-
----
-
-## Acknowledgements
-
-- Apache Spark™ team for Structured Streaming
-- Confluent for Kafka Docker images
-- Redis Labs for in-memory state store
-- The open-source community for pyspark, confluent-kafka, and avro libraries
