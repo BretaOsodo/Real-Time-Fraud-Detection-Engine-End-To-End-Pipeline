@@ -5,8 +5,7 @@
 A production-grade, real-time fraud detection system built on Apache Spark Streaming, Kafka and Redis. This engine processes tokenised payment transactions from multiple providers (VISA, Mastercard, M-Pesa, Flutterwave, Pesapal), enriches them with fraud features and produces enriched events for downstream ML scoring.
 
 ---
-## Architecture Diagram
-![Alt text](C:\Users\ADMIN\Documents\Projects\Real-Time-Fraud-Detection-Engine-End-To-End-Pipeline\docs\image.png)
+![Architecture Diagram](image.png)
 
 ## Table of Contents
 
