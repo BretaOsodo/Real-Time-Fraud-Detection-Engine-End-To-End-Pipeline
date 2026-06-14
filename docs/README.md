@@ -2,7 +2,7 @@
 
 ## End-to-End Pipeline for Real-Time Transaction Fraud Detection
 
-A production-grade, real-time fraud detection system built on Apache Spark Streaming, Kafka, and Redis. This engine processes tokenised payment transactions from multiple providers (VISA, Mastercard, M-Pesa, Flutterwave, Pesapal), enriches them with fraud features, and produces enriched events for downstream ML scoring.
+A production-grade, real-time fraud detection system built on Apache Spark Streaming, Kafka and Redis. This engine processes tokenised payment transactions from multiple providers (VISA, Mastercard, M-Pesa, Flutterwave, Pesapal), enriches them with fraud features and produces enriched events for downstream ML scoring.
 
 ---
 
@@ -26,24 +26,7 @@ A production-grade, real-time fraud detection system built on Apache Spark Strea
 
 ## Architecture Overview
 
-```
-┌─────────────────┐     ┌─────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  Raw Producers  │────▶│   Kafka     │────▶│  Tokenisers     │────▶│  Kafka Topics   │
-│  (5 Providers)  │     │  (Raw)      │     │  (HMAC-SHA256)  │     │  (Tokenised)    │
-└─────────────────┘     └─────────────┘     └─────────────────┘     └─────────────────┘
-                                                                             │
-                                                                             ▼
-┌─────────────────┐     ┌─────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  Enriched Topics│◀────│   Kafka     │◀────│  Spark Streaming│◀────│  Avro Parsing   │
-│  (5 Providers)  │     │  (Output)   │     │  Enrichment     │     │  + Union        │
-└─────────────────┘     └─────────────┘     └─────────────────┘     └─────────────────┘
-       │
-       ▼
-┌─────────────────┐
-│  ML Scoring     │
-│  (Downstream)   │
-└─────────────────┘
-```
+
 
 ### Technology Stack
 
